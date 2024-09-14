@@ -1,0 +1,7 @@
+#!/bin/sh
+# Set up the environment for the VNC session
+xset s off               # Disable screen saver
+xset s noblank            # Disable screen blanking
+
+# Start the window manager
+exec /usr/bin/startxfce4
