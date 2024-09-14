@@ -1,3 +1,11 @@
+# Build proxy
+FROM --platform=$BUILDPLATFORM golang:1.21-rc-bookworm AS proxy-build-env
+ENV CGO_ENABLED=1
+WORKDIR /src
+COPY ./proxy/* .
+RUN --mount=type=cache,target=/root/.cache/go-build go build -o port_proxy .
+
+# Actual image
 FROM ubuntu:22.04
 
 # set environment variables
@@ -61,7 +69,7 @@ RUN mkdir -p /home/labuser/Desktop && mkdir -p /home/labuser/Desktop/lab
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 # Add port proxy
-ADD ./proxy/port_proxy /usr/local/bin/port_proxy
+COPY --from=proxy-build-env /src/port_proxy /usr/local/bin/port_proxy
 
 # Add Xstartup
 RUN chmod +x /home/labuser/.vnc/xstartup
