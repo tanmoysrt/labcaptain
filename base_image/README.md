@@ -56,7 +56,7 @@ If you want to use any proxy in front of the container, you should set the `Host
 - In the lab image, do not run any service on these ports - 80, 8001, 8002, 8003, 8004
 
 ### License
-Apache License 2.0
+MIT License
 
 ### Credits
 Special thanks to this project - https://github.com/ConSol/docker-headless-vnc-container (Apache License 2.0). It made it possible to have proper configuration for Xfce4 + noVNC setup.
