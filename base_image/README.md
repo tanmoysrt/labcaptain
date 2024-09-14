@@ -25,7 +25,7 @@ FROM tanmoysrt/labcaptain_base:1
 You can put your lab files in the following folders:
 - /home/labuser/Desktop/lab
 
-### How to access lab sofware?
+### How to access lab software?
 - Access web terminal at http://terminal:8080
 - Access code editor at http://editor:8080
 - Access VNC at http://vnc:8080
