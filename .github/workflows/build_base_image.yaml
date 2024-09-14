@@ -1,6 +1,6 @@
 name: Build base image
 on:
-  push:
+  workflow_dispatch:
 jobs:
   docker:
     runs-on: ubuntu-latest
