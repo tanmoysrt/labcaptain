@@ -7,6 +7,9 @@ alias python=python3
 # Set password for labuser
 echo "labuser:$USER_PASSWORD" | sudo chpasswd
 
+# Set capability to haproxy
+sudo setcap 'cap_net_bind_service=+ep' /usr/sbin/haproxy
+
 if [ "$ENABLE_WEB_TERMINAL" == "1" ]; then
     ttyd -p 8001 -W -w /home/labuser/Desktop/lab bash &
     echo "ttyd started"
