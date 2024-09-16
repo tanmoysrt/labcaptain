@@ -17,11 +17,6 @@ func main() {
 	}
 
 	initiateDB()
-
-	// err := runCommandOnServer("116.203.69.63:22", "ls -la")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 	// Run the root command
 	rootCmd.Execute()
 }
