@@ -3,6 +3,8 @@ package main
 import (
 	_ "embed"
 	"errors"
+	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -41,7 +43,12 @@ func (s *Server) Create() error {
 	s.Enabled = false
 	s.PrometheusExportedEnabled = false
 	s.PodmanInstalled = false
-	return db.Create(s).Error
+	err := db.Create(s).Error
+	if err != nil {
+		return err
+	}
+	// trigger prometheus config update
+	return triggerPrometheusConfigUpdate()
 }
 
 func DeleteServer(serverIP string) error {
@@ -52,10 +59,21 @@ func DeleteServer(serverIP string) error {
 	}
 	// delete all labs associated with this server
 	db.Where("server_ip = ?", serverIP).Delete(&Lab{})
-	return db.Delete(&server).Error
+	err = db.Delete(&server).Error
+	if err != nil {
+		return err
+	}
+	// trigger prometheus config update
+	return triggerPrometheusConfigUpdate()
 }
 
 func (s *Server) Enable() error {
+	if !s.PodmanInstalled {
+		return errors.New("Podman is not enabled on this server")
+	}
+	if !s.PrometheusExportedEnabled {
+		return errors.New("Prometheus exporter is not enabled on this server")
+	}
 	s.Enabled = true
 	return db.Save(s).Error
 }
@@ -82,4 +100,25 @@ var installPodmanScript string
 
 func SetupPodman(serverIP string) error {
 	return runCommandOnServer(serverIP, installPodmanScript)
+}
+
+//go:embed scripts/install_prometheus_exporter.sh
+var installPrometheusExporterScript string
+
+func SetupPrometheusExporter(serverIP string) error {
+	return runCommandOnServer(serverIP, installPrometheusExporterScript)
+}
+
+func triggerPrometheusConfigUpdate() error {
+	config, err := generatePrometheusConfig()
+	if err != nil {
+		return err
+	}
+	// replace the /etc/prometheus/prometheus.yml file with the new config
+	err = os.WriteFile("/etc/prometheus/prometheus.yml", []byte(config), 0644)
+	if err != nil {
+		return err
+	}
+	// trigger prometheus service restart
+	return exec.Command("systemctl", "restart", "prometheus").Run()
 }

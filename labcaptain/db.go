@@ -5,12 +5,15 @@ import (
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var db *gorm.DB
 
 func initiateDB() {
-	openDB, err := gorm.Open(sqlite.Open("data.db"), &gorm.Config{})
+	openDB, err := gorm.Open(sqlite.Open("data.db"), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		panic("failed to open database")
 	}
