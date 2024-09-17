@@ -3,8 +3,8 @@ package main
 import (
 	_ "embed"
 	"errors"
+	"net/http"
 	"os"
-	"os/exec"
 	"strings"
 )
 
@@ -120,5 +120,19 @@ func triggerPrometheusConfigUpdate() error {
 		return err
 	}
 	// trigger prometheus service restart
-	return exec.Command("systemctl", "restart", "prometheus").Run()
+	// POST http://localhost:9090/-/reload
+	req, err := http.NewRequest("POST", "http://localhost:9090/-/reload", nil)
+	if err != nil {
+		return err
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return errors.New("Failed to reload prometheus config")
+	}
+	return nil
 }
