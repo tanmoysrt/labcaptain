@@ -17,6 +17,19 @@ func GetAllServers() ([]Server, error) {
 	return servers, nil
 }
 
+func GetEnabledServersIPs() ([]string, error) {
+	var servers []Server
+	err := db.Where("enabled = ?", true).Select("ip").Find(&servers).Error
+	if err != nil {
+		return nil, err
+	}
+	var ips []string
+	for _, server := range servers {
+		ips = append(ips, server.IP)
+	}
+	return ips, nil
+}
+
 func GetServerByIP(ip string) (*Server, error) {
 	var server *Server
 	err := db.Where("ip = ?", ip).First(&server).Error

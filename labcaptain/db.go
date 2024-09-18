@@ -68,11 +68,9 @@ type Lab struct {
 	ExpiryTime           time.Time
 	ServerIP             string
 	ContainerPort        int
-	MaxMemoryMB          int // 0 means no limit
-	CPUs                 int // 0 means no limit
 	WebTerminalEnabled   bool
 	CodeServerEnabled    bool
 	VNCEnabled           bool
 	PortProxyEnabled     bool
-	EnvironmentVariables string // json
+	EnvironmentVariables string // <variable> = <value>
 }

@@ -32,6 +32,7 @@ func Execute() {
 func init() {
 	rootCmd.AddCommand(serverCmd)
 	rootCmd.AddCommand(generateCmd)
+	rootCmd.AddCommand(apiServerCmd)
 	serverCmd.AddCommand(serverAddCmd)
 	serverCmd.AddCommand(serverListCmd)
 	serverCmd.AddCommand(serverRemoveCmd)
@@ -255,5 +256,14 @@ var generatePrometheusConfigCmd = &cobra.Command{
 		} else {
 			fmt.Println(configContent)
 		}
+	},
+}
+
+// Start API Server
+var apiServerCmd = &cobra.Command{
+	Use:   "api-server",
+	Short: "Start API server",
+	Run: func(cmd *cobra.Command, args []string) {
+		StartAPIServer()
 	},
 }

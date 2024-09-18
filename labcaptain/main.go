@@ -17,6 +17,7 @@ func main() {
 	}
 
 	initiateDB()
+
 	// Run the root command
 	rootCmd.Execute()
 }

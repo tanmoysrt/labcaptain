@@ -38,42 +38,5 @@ detect_debian() {
     fi
 }
 
-# Function to create a systemd service for podman system service
-create_podman_service() {
-    SERVICE_FILE_PATH="/etc/systemd/system/podman-service.service"
-    PODMAN_BINARY=$(which podman)
-
-    echo "Creating systemd service file at $SERVICE_FILE_PATH..."
-
-    sudo bash -c "cat > $SERVICE_FILE_PATH" <<EOF
-[Unit]
-Description=Podman System Service
-After=network.target
-
-[Service]
-ExecStart=$PODMAN_BINARY system service --time=0 tcp://0.0.0.0:1001
-Restart=always
-User=root
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-    # Reload systemd to recognize the new service
-    echo "Reloading systemd..."
-    sudo systemctl daemon-reload
-
-    # Enable the service to start on boot
-    echo "Enabling podman-service..."
-    sudo systemctl enable podman-service
-
-    # Start the service
-    echo "Starting podman-service..."
-    sudo systemctl start podman-service
-
-    # Check the service status
-    sudo systemctl status podman-service
-}
 # Main script execution
 detect_debian
-create_podman_service
