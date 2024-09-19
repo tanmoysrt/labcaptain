@@ -20,6 +20,7 @@ func runCommandOnServerWithBuffer(host, command string, stdoutBuffer, stderrBuff
 	if err != nil {
 		return fmt.Errorf("could not connect to SSH agent: %v", err)
 	}
+	defer sshAgent.Close()
 
 	// Create an SSH client configuration using the agent
 	agentClient := agent.NewClient(sshAgent)

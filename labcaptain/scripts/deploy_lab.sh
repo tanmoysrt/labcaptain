@@ -36,7 +36,7 @@ port=$(find_free_port)
 # replace the template with the port
 container_quadlet=$(echo "$container_quadlet_template" | sed "s/{{lab_published_port}}/$port/g")
 # create the file
-echo -e $container_quadlet > /etc/containers/systemd/{{lab_id}}.container
+echo -e "$container_quadlet" > /etc/containers/systemd/{{lab_id}}.container
 # daemon-reload without anything on stdout and stderr
 systemctl daemon-reload > /dev/null 2>&1
 # start the service

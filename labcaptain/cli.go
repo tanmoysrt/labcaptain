@@ -32,7 +32,7 @@ func Execute() {
 func init() {
 	rootCmd.AddCommand(serverCmd)
 	rootCmd.AddCommand(generateCmd)
-	rootCmd.AddCommand(apiServerCmd)
+	rootCmd.AddCommand(startCmd)
 	serverCmd.AddCommand(serverAddCmd)
 	serverCmd.AddCommand(serverListCmd)
 	serverCmd.AddCommand(serverRemoveCmd)
@@ -260,10 +260,14 @@ var generatePrometheusConfigCmd = &cobra.Command{
 }
 
 // Start API Server
-var apiServerCmd = &cobra.Command{
-	Use:   "api-server",
-	Short: "Start API server",
+var startCmd = &cobra.Command{
+	Use:   "start",
+	Short: "Start API server and worker",
 	Run: func(cmd *cobra.Command, args []string) {
-		StartAPIServer()
+		go startAPIServer()
+		go processPendingLabsDeployment()
+		go processExpiredLabsDeletion()
+		go processAutoExpiratonOfLabs()
+		<-make(chan bool)
 	},
 }

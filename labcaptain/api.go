@@ -23,8 +23,9 @@ type LabInfo struct {
 	ExpiryTime time.Time `json:"expiry_time"`
 }
 
-func StartAPIServer() {
+func startAPIServer() {
 	e := echo.New()
+	e.HideBanner = true
 	e.GET("/status/:lab_id", func(c echo.Context) error {
 		lab_id := c.Param("lab_id")
 		lab, err := GetLabByID(lab_id)
@@ -65,8 +66,16 @@ func StartAPIServer() {
 			ExpiryTime: lab.ExpiryTime,
 		})
 	})
-	e.POST("/stop", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+	e.POST("/stop/:lab_id", func(c echo.Context) error {
+		labID := c.Param("lab_id")
+		if labID == "" {
+			return c.String(http.StatusBadRequest, "Lab ID is required")
+		}
+		err := db.Model(&Lab{}).Where("id = ?", labID).Update("status", LabExpiredStatus).Error
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to destroy lab")
+		}
+		return c.String(http.StatusOK, "Lab destroyed successfully")
 	})
 	e.Logger.Fatal(e.Start(":8888"))
 }

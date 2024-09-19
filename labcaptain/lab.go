@@ -12,6 +12,7 @@ import (
 
 	"github.com/google/uuid"
 	"golang.org/x/exp/rand"
+	"gorm.io/gorm"
 )
 
 func (l *Lab) Create() error {
@@ -82,18 +83,18 @@ func DeployLab(labID string) error {
 	stdoutBuffer := new(bytes.Buffer)
 	stderrBuffer := new(bytes.Buffer)
 	// replace variables in the script
-	deployLabScript = strings.ReplaceAll(deployLabScript, "{{lab_id}}", lab.ID)
-	deployLabScript = strings.ReplaceAll(deployLabScript, "{{lab_image}}", lab.Image)
-	deployLabScript = strings.ReplaceAll(deployLabScript, "{{lab_environment_variables}}", environmentVariables)
+	deployLabScriptCopy := string(deployLabScript)
+	deployLabScriptCopy = strings.ReplaceAll(deployLabScriptCopy, "{{lab_id}}", lab.ID)
+	deployLabScriptCopy = strings.ReplaceAll(deployLabScriptCopy, "{{lab_image}}", lab.Image)
+	deployLabScriptCopy = strings.ReplaceAll(deployLabScriptCopy, "{{lab_environment_variables}}", environmentVariables)
 	// run the script
-	err = runCommandOnServerWithBuffer(server+":22", deployLabScript, stdoutBuffer, stderrBuffer)
+	err = runCommandOnServerWithBuffer(server+":22", deployLabScriptCopy, stdoutBuffer, stderrBuffer)
 	if err != nil {
 		return err
 	}
 	if stderrBuffer.Len() > 0 {
 		return errors.New(stderrBuffer.String())
 	}
-	fmt.Printf(stdoutBuffer.String())
 	// parse the output using regex match to get the port > format > assigned_${port}_port
 	regex_match := regexp.MustCompile(`assigned_(\d+)_port`)
 	matches := regex_match.FindStringSubmatch(stdoutBuffer.String())
@@ -122,10 +123,13 @@ func DestroyLab(labID string) error {
 	var lab Lab
 	err := db.Where("id = ?", labID).First(&lab).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
 		return err
 	}
-	if lab.Status != LabProvisionedStatus {
-		return errors.New("Lab is not in provisioned status")
+	if lab.Status != LabExpiredStatus {
+		return errors.New("Lab is not in expired status")
 	}
 	// destroy from server
 	err = runCommandOnServer(lab.ServerIP+":22", strings.ReplaceAll(destroyLabScript, "{{lab_id}}", lab.ID))
@@ -134,5 +138,9 @@ func DestroyLab(labID string) error {
 	}
 	// delete lab from db
 	db.Delete(&lab)
+	return nil
+}
+
+func DestroyLabs() error {
 	return nil
 }
