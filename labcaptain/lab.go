@@ -10,13 +10,23 @@ import (
 
 	_ "embed"
 
-	"github.com/google/uuid"
+	"github.com/jaevor/go-nanoid"
 	"golang.org/x/exp/rand"
 	"gorm.io/gorm"
 )
 
+var nanoidGenerator func() string
+
+func init() {
+	gen, err := nanoid.CustomASCII("abcdefghijklmnopqrstuvwxyz0123456789", 15)
+	if err != nil {
+		panic(err)
+	}
+	nanoidGenerator = gen
+}
+
 func (l *Lab) Create() error {
-	l.ID = uuid.NewString()
+	l.ID = nanoidGenerator()
 	l.Status = LabRequestedStatus
 	return db.Create(l).Error
 }
