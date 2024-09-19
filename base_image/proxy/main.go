@@ -11,10 +11,11 @@ import (
 )
 
 // Regular expression to match "port-<dest_port>:<random_string>"
-var hostPattern = regexp.MustCompile(`^port-(\d+):[a-zA-Z0-9]+$`)
+var hostPattern = regexp.MustCompile(`^port-(\d+)(:[a-zA-Z0-9]+)?$`)
+
 // Blacklisted ports
 var blacklistedPorts = map[string]bool{
-	"80": true, // proxy port - high chance go in recursive loop
+	"80":   true, // proxy port - high chance go in recursive loop
 	"8001": true, // web terminal, already mapped so skip
 	"8002": true, // code server, already mapped so skip
 	"8003": true, // vnc, already mapped so skip
@@ -29,7 +30,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	// Check if the Host header matches the required format
 	matches := hostPattern.FindStringSubmatch(host)
 	if matches == nil {
-		http.Error(w, "Host header format invalid. Expected format: port-<dest_port>:<random_string>", http.StatusExpectationFailed)
+		http.Error(w, "Host header format invalid.", http.StatusExpectationFailed)
 		return
 	}
 
