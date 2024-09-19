@@ -22,7 +22,7 @@ detect_debian() {
     if [ -f /etc/os-release ]; then
         source /etc/os-release
         case "$ID" in
-            debian|ubuntu|linuxmint)
+            debian|ubuntu|linuxmint|kali)
                 if ! check_podman; then
                     install_debian
                 fi
