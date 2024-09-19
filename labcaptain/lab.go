@@ -123,6 +123,7 @@ func DeployLab(labID string) error {
 	if err != nil {
 		return err
 	}
+	generateNginxConfig(lab.ID, server, port)
 	return nil
 }
 
@@ -148,9 +149,7 @@ func DestroyLab(labID string) error {
 	}
 	// delete lab from db
 	db.Delete(&lab)
-	return nil
-}
-
-func DestroyLabs() error {
+	// remove nginx config
+	removeNginxConfig(lab.ID)
 	return nil
 }

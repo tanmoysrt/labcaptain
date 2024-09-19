@@ -1,0 +1,25 @@
+server {
+    listen 80;
+    server_name ~^(?<subdomain>.+)\.{{lab_id}}\.local$;
+
+    location / {
+        # Set the Host header to the captured subdomain
+        proxy_set_header Host $subdomain;
+
+        # Handle WebSocket headers
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        # Pass all requests to the backend server
+        proxy_pass http://{{server_ip}}:{{container_port}};
+
+        # You may also want to pass other headers, if necessary
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Increase timeout for WebSocket connections
+        proxy_read_timeout 86400s;
+        proxy_send_timeout 86400s;
+   }
+}

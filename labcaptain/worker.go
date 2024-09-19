@@ -16,6 +16,7 @@ func processPendingLabsDeployment() {
 			errorLogger.Println(err.Error())
 			continue
 		}
+		totalDeploys := 0
 		for _, lab := range pendingLabs {
 			err := DeployLab(lab.ID)
 			if err != nil {
@@ -23,6 +24,14 @@ func processPendingLabsDeployment() {
 			} else {
 				successLogger.Println(lab.ID + " > " + "Lab deployed successfully")
 			}
+			totalDeploys += 1
+			if totalDeploys >= 3 {
+				reloadNginxConfig()
+				totalDeploys = 0
+			}
+		}
+		if len(pendingLabs) > 0 {
+			reloadNginxConfig()
 		}
 		time.Sleep(time.Duration(1) * time.Second)
 	}
@@ -45,7 +54,9 @@ func processExpiredLabsDeletion() {
 				successLogger.Println(lab.ID + " > " + "Lab destroyed successfully")
 			}
 		}
-
+		if len(expiredLabs) > 0 {
+			reloadNginxConfig()
+		}
 		time.Sleep(time.Duration(1) * time.Second)
 	}
 }
