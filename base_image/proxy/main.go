@@ -10,8 +10,8 @@ import (
 	"time"
 )
 
-// Regular expression to match "port-<dest_port>:<random_string>"
-var hostPattern = regexp.MustCompile(`^port-(\d+)(:[a-zA-Z0-9]+)?$`)
+// Regular expression to match "port-<dest_port>.<anything>"
+var hostPattern = regexp.MustCompile(`^port-(\d+).\S+$`)
 
 // Blacklisted ports
 var blacklistedPorts = map[string]bool{
