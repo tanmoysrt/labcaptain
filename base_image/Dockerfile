@@ -61,6 +61,10 @@ RUN curl https://haproxy.debian.net/bernat.debian.org.gpg | gpg --dearmor > /usr
     apt update -y && apt install -y haproxy=3.0.\*
 ADD ./haproxy.cfg /etc/haproxy/haproxy.cfg
 
+# Set entrypoint
+COPY ./entrypoint.sh /
+RUN chmod +x /entrypoint.sh && chown labuser:labuser /entrypoint.sh
+
 # Switch to new user
 USER labuser
 
@@ -78,9 +82,5 @@ RUN chmod +x /home/labuser/.vnc/xstartup
 
 # EXPOSE PORT
 EXPOSE 80
-
-# Set entrypoint
-COPY ./entrypoint.sh /
-RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
