@@ -81,5 +81,6 @@ EXPOSE 80
 
 # Set entrypoint
 COPY ./entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
