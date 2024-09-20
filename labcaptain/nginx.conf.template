@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name ~^(?<subdomain>.+)\.{{lab_id}}\.local$;
+    server_name ~^(?<subdomain>.+)\.{{lab_id}}\.{{base_domain}}$;
 
     location / {
         # Set the Host header to the captured subdomain

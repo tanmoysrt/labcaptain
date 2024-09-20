@@ -18,6 +18,7 @@ var errorLogger = log.New(os.Stderr, "[ERROR] [NGINX] : ", log.LstdFlags)
 
 func generateNginxConfig(labID string, serverIP string, containerPort int) {
 	nginxCnfig := string(nginxConfigTemplate)
+	nginxCnfig = strings.ReplaceAll(nginxCnfig, "{{base_domain}}", os.ExpandEnv("$LAB_CAPTAIN_BASE_DOMAIN"))
 	nginxCnfig = strings.ReplaceAll(nginxCnfig, "{{lab_id}}", labID)
 	nginxCnfig = strings.ReplaceAll(nginxCnfig, "{{server_ip}}", serverIP)
 	nginxCnfig = strings.ReplaceAll(nginxCnfig, "{{container_port}}", strconv.Itoa(containerPort))

@@ -30,6 +30,7 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.AddCommand(localSetupCmd)
 	rootCmd.AddCommand(serverCmd)
 	rootCmd.AddCommand(generateCmd)
 	rootCmd.AddCommand(startCmd)
@@ -264,10 +265,29 @@ var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start API server and worker",
 	Run: func(cmd *cobra.Command, args []string) {
+		// check for BASE_DOMAIN env variable
+		if _, ok := os.LookupEnv("LAB_CAPTAIN_BASE_DOMAIN"); !ok {
+			fmt.Println("LAB_CAPTAIN_BASE_DOMAIN environment variable not set")
+			return
+		}
 		go startAPIServer()
 		go processPendingLabsDeployment()
 		go processExpiredLabsDeletion()
 		go processAutoExpiratonOfLabs()
 		<-make(chan bool)
+	},
+}
+
+// Local setup
+var localSetupCmd = &cobra.Command{
+	Use:   "local-setup",
+	Short: "Setup labcaptain on the local machine",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := setup()
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		fmt.Println("Labcaptain setup successfully")
 	},
 }
