@@ -51,6 +51,8 @@ type Server struct {
 	Enabled                   bool
 	PodmanInstalled           bool
 	PrometheusExportedEnabled bool
+	CpuUsage                  int
+	MemoryUsage               int
 }
 
 type LabStatus string

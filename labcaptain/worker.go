@@ -77,3 +77,26 @@ func processAutoExpiratonOfLabs() {
 		time.Sleep(time.Duration(10) * time.Second)
 	}
 }
+
+func updateServerMetrics() {
+	errorLogger := log.New(os.Stderr, "[ERROR] [ProcessServerMetrics] : ", log.LstdFlags)
+	for {
+		servers, err := GetAllServers()
+		if err != nil {
+			errorLogger.Println(err.Error())
+			continue
+		}
+		for _, server := range servers {
+			metrics, err := GetServerMetrics(server.IP)
+			if err != nil {
+				errorLogger.Println(err.Error())
+				continue
+			}
+			err = db.Model(&Server{}).Where("ip = ?", server.IP).Update("cpu_usage", metrics.CPUUsage).Update("memory_usage", metrics.MemoryUsage).Error
+			if err != nil {
+				errorLogger.Println(err.Error())
+			}
+		}
+		time.Sleep(time.Duration(5) * time.Second)
+	}
+}

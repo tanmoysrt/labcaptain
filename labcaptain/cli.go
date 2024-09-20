@@ -89,9 +89,9 @@ var serverListCmd = &cobra.Command{
 			return
 		}
 		w := tabwriter.NewWriter(os.Stdout, 10, 1, 5, ' ', 0)
-		fmt.Fprintln(w, "IP ADDRESS\tPODMAN INSTALLED\tPROMETHEUS EXPORTED\tENABLED")
+		fmt.Fprintln(w, "IP ADDRESS\tPODMAN INSTALLED\tPROMETHEUS EXPORTED\tENABLED\tCPU USAGE\tMEMORY USAGE")
 		for _, server := range servers {
-			fmt.Fprintln(w, fmt.Sprintf("%s\t%t\t%t\t%t", server.IP, server.PodmanInstalled, server.PrometheusExportedEnabled, server.Enabled))
+			fmt.Fprintln(w, fmt.Sprintf("%s\t%t\t%t\t%t\t%d\t%d", server.IP, server.PodmanInstalled, server.PrometheusExportedEnabled, server.Enabled, server.CpuUsage, server.MemoryUsage))
 		}
 		w.Flush()
 	},
@@ -274,6 +274,7 @@ var startCmd = &cobra.Command{
 		go processPendingLabsDeployment()
 		go processExpiredLabsDeletion()
 		go processAutoExpiratonOfLabs()
+		go updateServerMetrics()
 		<-make(chan bool)
 	},
 }
