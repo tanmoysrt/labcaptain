@@ -35,7 +35,9 @@ RUN apt update -y && apt install -y \
     git \
     sudo \
     vim \
-    htop
+    htop \
+    nano \
+    tini
 
 # Add a new user
 RUN useradd -m -s /bin/bash labuser && \
@@ -80,5 +82,4 @@ EXPOSE 80
 # Set entrypoint
 COPY ./entrypoint.sh /
 
-ENTRYPOINT ["bash"]
-CMD ["/entrypoint.sh"]
+ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
