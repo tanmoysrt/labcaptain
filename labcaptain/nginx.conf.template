@@ -4,7 +4,7 @@ server {
 
     location / {
         # Set the Host header to the captured subdomain
-        proxy_set_header Host $subdomain;
+        proxy_set_header Host $host;
 
         # Handle WebSocket headers
         proxy_set_header Upgrade $http_upgrade;
