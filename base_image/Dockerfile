@@ -83,4 +83,4 @@ RUN chmod +x /home/labuser/.vnc/xstartup
 # EXPOSE PORT
 EXPOSE 80
 
-ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
+ENTRYPOINT ["tini", "--", "bash", "/entrypoint.sh"]

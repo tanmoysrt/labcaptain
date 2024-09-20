@@ -1,4 +1,4 @@
-# !/bin/sh -e
+# !/bin/bash
 
 set -e
 source $HOME/.bashrc
@@ -30,10 +30,10 @@ if [ "$ENABLE_VNC" == "1" ]; then
     sudo mkdir -p /tmp/.ICE-unix && \
     sudo chown root:root /tmp/.ICE-unix && \
     sudo chmod 1777 /tmp/.ICE-unix
-    
+
     $NO_VNC_HOME/utils/novnc_proxy --vnc localhost:5901 --listen 8003 &
     echo "noVNC proxy started"
-    
+
     vncserver :1 -depth 24 -geometry 1920x1080 -SecurityTypes None --I-KNOW-THIS-IS-INSECURE
     echo "VNC server started"
 else
