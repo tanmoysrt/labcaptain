@@ -30,7 +30,11 @@ func startAPIServer() {
 		lab_id := c.Param("lab_id")
 		lab, err := GetLabByID(lab_id)
 		if err != nil {
-			return c.String(http.StatusNotFound, "Lab not found")
+			return c.JSON(200, LabInfo{
+				ID:         lab_id,
+				Status:     LabExpiredStatus,
+				ExpiryTime: time.Now(),
+			})
 		}
 		return c.JSON(200, LabInfo{
 			ID:         lab.ID,

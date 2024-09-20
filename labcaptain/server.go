@@ -30,6 +30,18 @@ func GetEnabledServersIPs() ([]string, error) {
 	return ips, nil
 }
 
+func GetRandomDeployableServer() (string, error) {
+	var servers []Server
+	err := db.Where("enabled = ? AND cpu_usage < ? AND memory_usage < ?", true, 90, 90).Order("RANDOM()").Limit(1).Find(&servers).Error
+	if err != nil {
+		return "", err
+	}
+	if len(servers) == 0 {
+		return "", errors.New("No servers found for deployment")
+	}
+	return servers[0].IP, nil
+}
+
 func GetServerByIP(ip string) (*Server, error) {
 	var server *Server
 	err := db.Where("ip = ?", ip).First(&server).Error

@@ -11,7 +11,6 @@ import (
 	_ "embed"
 
 	"github.com/jaevor/go-nanoid"
-	"golang.org/x/exp/rand"
 	"gorm.io/gorm"
 )
 
@@ -79,15 +78,10 @@ func DeployLab(labID string) error {
 	if lab.Status != LabRequestedStatus {
 		return errors.New("Lab is not in requested status")
 	}
-	servers, err := GetEnabledServersIPs()
+	server, err := GetRandomDeployableServer()
 	if err != nil {
 		return err
 	}
-	// pick a random server
-	if len(servers) == 0 {
-		return errors.New("No servers found for deployment")
-	}
-	server := servers[rand.Intn(len(servers))]
 	environmentVariables := fmt.Sprintf("ENABLE_WEB_TERMINAL=%d ENABLE_CODE_SERVER=%d ENABLE_VNC=%d ENABLE_PORT_PROXY=%d %s", boolToInt(lab.WebTerminalEnabled), boolToInt(lab.CodeServerEnabled), boolToInt(lab.VNCEnabled), boolToInt(lab.PortProxyEnabled), lab.EnvironmentVariables)
 	// deploy the lab on server
 	stdoutBuffer := new(bytes.Buffer)
