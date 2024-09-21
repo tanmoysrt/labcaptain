@@ -1,7 +1,7 @@
-# !/bin/bash
+#!/bin/bash
 
 set -e
-source $HOME/.bashrc
+source "$HOME/.bashrc"
 alias python=python3
 
 # Set password for labuser
@@ -10,16 +10,30 @@ echo "labuser:$USER_PASSWORD" | sudo chpasswd
 # Set capability to haproxy
 sudo setcap 'cap_net_bind_service=+ep' /usr/sbin/haproxy
 
+# Function to start services
+start_service() {
+    "$@" &
+    echo "$1 started"
+}
+
+# Function to terminate all background jobs with SIGKILL
+cleanup() {
+    echo "Received exit signal, killing all processes with SIGKILL..."
+    kill -9 0  # This will send SIGKILL to all processes in the current process group
+}
+
+# Set up traps to handle signals
+trap cleanup SIGINT SIGTERM
+
+# Start services based on environment variables
 if [ "$ENABLE_WEB_TERMINAL" == "1" ]; then
-    ttyd -p 8001 -W -w /home/labuser/Desktop/lab bash &
-    echo "ttyd started"
+    start_service ttyd -p 8001 -W -w /home/labuser/Desktop/lab bash
 else
     echo "ttyd disabled"
 fi
 
 if [ "$ENABLE_CODE_SERVER" == "1" ]; then
-    code-server --bind-addr 0.0.0.0:8002 --auth none --disable-telemetry --disable-workspace-trust --disable-update-check  &
-    echo "code-server started"
+    start_service code-server --bind-addr 0.0.0.0:8002 --auth none --disable-telemetry --disable-workspace-trust --disable-update-check
 else
     echo "code-server disabled"
 fi
@@ -31,8 +45,7 @@ if [ "$ENABLE_VNC" == "1" ]; then
     sudo chown root:root /tmp/.ICE-unix && \
     sudo chmod 1777 /tmp/.ICE-unix
 
-    $NO_VNC_HOME/utils/novnc_proxy --vnc localhost:5901 --listen 8003 &
-    echo "noVNC proxy started"
+    start_service $NO_VNC_HOME/utils/novnc_proxy --vnc localhost:5901 --listen 8003
 
     vncserver :1 -depth 24 -geometry 1920x1080 -SecurityTypes None --I-KNOW-THIS-IS-INSECURE
     echo "VNC server started"
@@ -41,21 +54,14 @@ else
 fi
 
 if [ "$ENABLE_PORT_PROXY" == "1" ]; then
-    port_proxy &
-    echo "Port proxy started"
+    start_service port_proxy
 else
     echo "Port proxy disabled"
 fi
 
-# start haproxy as ingress
-haproxy -f /etc/haproxy/haproxy.cfg &
+# Start HAProxy as ingress
+start_service haproxy -f /etc/haproxy/haproxy.cfg
 
-# wait for all processes to finish
-exit_all () {
-    echo "Received exit signal, killing all processes..."
-    exit 0
-}
-
-trap exit_all SIGINT SIGTERM SIGKILL SIGQUIT
+# Wait for all processes to finish
 echo "Waiting for processes to finish..."
 wait

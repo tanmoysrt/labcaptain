@@ -36,8 +36,7 @@ RUN apt update -y && apt install -y \
     sudo \
     vim \
     htop \
-    nano \
-    tini
+    nano
 
 # Add a new user
 RUN useradd -m -s /bin/bash labuser && \
@@ -83,4 +82,4 @@ RUN chmod +x /home/labuser/.vnc/xstartup
 # EXPOSE PORT
 EXPOSE 80
 
-ENTRYPOINT ["tini", "--", "bash", "/entrypoint.sh"]
+ENTRYPOINT ["bash", "/entrypoint.sh"]
