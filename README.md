@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/tanmoysrt/labcaptain/main/assets/logo.png" width="200">
+
 ### What is LabCaptain ?
 LabCaptain is a tiny daemon + CLI tool that helps to deploy lab environment in cluster.
 
@@ -49,6 +51,22 @@ WantedBy=multi-user.target
 ```
 13. Run `systemctl daemon-reload` and `systemctl enable labcaptain`
 14. Run `systemctl start labcaptain` to start labcaptain
+
+**Note:** Your server may have not ssh-agent installed. Run `echo $SSH_AUTH_SOCK` to check if it's installed.
+
+- Generate a ssh private key for all of your other servers (if you haven't already)
+  ```bash
+  ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+  ```
+  Put the private key in `/root/.ssh/id_rsa` and the public key in `/root/.ssh/id_rsa.pub`
+
+- Add the public key to all of your other servers
+- Create/edit `/etc/rc.local` file and add the following line
+  ```bash
+  eval $(ssh-agent -s)
+  ssh-add /root/.ssh/id_rsa
+  ```
+  and make that file executable with `chmod +x /etc/rc.local` and reboot the server.
 
 ### Future Work
 -[] Implement SSH connection pool for faster communication
