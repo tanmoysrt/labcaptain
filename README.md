@@ -34,6 +34,12 @@ https://hub.docker.com/r/tanmoysrt/labcaptain_base
 - NoVNC + noVNC proxy
 - ttyd
 
+### System Architecture
+![System Architecture](./assets/system_architecture.png)
+
+### Lab Architecture (Labcaptain Docker Image)
+![Lab Architecture](./assets/lab_architecture.png)
+
 ### Installation guide (Ubuntu 22.04)
 1. Install golang (https://go.dev/doc/install)
 2. Clone the repo
@@ -131,6 +137,7 @@ WantedBy=multi-user.target
 -[] Implement SSH connection pool for faster communication
 -[] Implement support for resource limits
 -[] Configurable option for lab proxy at port 443 ssl (P.S : currently it's also possible by editing `labcaptain/nginx.conf.template`)
+-[] Remote storage mount support
 
 ### License
 MIT License
