@@ -12,15 +12,15 @@ The name `LabCaptain` is due to the fact that it takes the responsibility of lab
 
 Now, the most interesing part is -
 1. Labcaptain providing docker base image, so that you can build your own lab environment easily.
-```
-registry.hub.docker.com/tanmoysrt/labcaptain_base
-```
+   ```
+   registry.hub.docker.com/tanmoysrt/labcaptain_base
+   ```
 2. Labcaptain providing API to manage lab environment.
 3. Web terminal, code server, VNC, port forwarding out of the box.
-- https://terminal.{lab_id}.example.com : Web terminal
-- https://editor.{lab_id}.example.com : Code server (VSCode like)
-- https://vnc.{lab_id}.example.com : VNC
-- https://port-{port_no}.{lab_id}.example.com : Port forwarding out of the box. You can run your own tool inside the container and access it via the url format. Just small restrictions - you cant use 8000, 8001, 8002, 8003, 8004 ports.
+   - https://terminal.{lab_id}.example.com : Web terminal
+   - https://editor.{lab_id}.example.com : Code server (VSCode like)
+   - https://vnc.{lab_id}.example.com : VNC
+   - https://port-{port_no}.{lab_id}.example.com : Port forwarding out of the box. You can run your own tool inside the container and access it via the url format. Just small restrictions - you cant use 8000, 8001, 8002, 8003, 8004 ports.
 
 To know more, how can you disable specific feature like VNC, check the image documentation.
 https://hub.docker.com/r/tanmoysrt/labcaptain_base
