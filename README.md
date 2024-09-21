@@ -1,2 +1,56 @@
 ### What is LabCaptain ?
-LabCaptain is a daemon + CLI tool to deploy any kind of lab environment in cluster.
+LabCaptain is a tiny daemon + CLI tool that helps to deploy lab environment in cluster.
+
+### Why LabCaptain ?
+I have planned to build a lab environment or dev platform first.
+Then thought about this abstraction layer which will help to build and deploy lab environment easily.
+So, I decided to build this lightweight tool to manage it.
+
+The name `LabCaptain` is due to the fact that it takes the responsibility of lab environment management. You will just say it you need to deploy a lab environment for certain period of time and it will do the task.
+
+### Tech Stack
+- Golang
+- SQLite3 (for database)
+- Podman
+- Prometheus
+- HAProxy
+- NoVNC + noVNC proxy
+- ttyd
+
+### Installation guide (Ubuntu 22.04)
+1. Install golang (https://go.dev/doc/install)
+2. Clone the repo
+3. Go inside `labcaptain` folder
+4. Run `go build` to build the binary
+5. Move the `labcaptain` binary to `/usr/local/bin`
+6. Run `labcaptain local-setup` to setup labcaptain on the local machine
+7. Run `labcaptain server add <ip>` to add a new server
+8. Run `labcaptain server list` to list all servers
+9. Run `labcaptain server setup-podman <ip>` to setup podman on the server
+10. Run `labcaptain server setup-prometheus <ip>` to setup prometheus exporter on the server
+11. Run `labcaptain server enable <ip>` to enable a server
+12. Create a systemd service file `/etc/systemd/system/labcaptain.service`
+```bash
+[Unit]
+Description=LabCaptain
+After=network.target
+
+[Service]
+User=root
+Type=simple
+Environment="LAB_CAPTAIN_BASE_DOMAIN=example.com"
+Environment="LABCAPTAIN_API_TOKEN=random_secret"
+ExecStart=/usr/local/bin/labcaptain
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+13. Run `systemctl daemon-reload` and `systemctl enable labcaptain`
+14. Run `systemctl start labcaptain` to start labcaptain
+
+### Future Work
+-[] Implement SSH connection pool for faster communication
+-[] Implement support for resource limits
+-[] Configurable option for lab proxy at port 443 ssl (P.S : currently it's also possible by editing `labcaptain/nginx.conf.template`)
