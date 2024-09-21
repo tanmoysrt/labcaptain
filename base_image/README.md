@@ -26,22 +26,12 @@ You can put your lab files in the following folders:
 - /home/labuser/Desktop/lab
 
 ### How to access lab software?
-- Access web terminal at http://terminal:8080
-- Access code editor at http://editor:8080
-- Access VNC at http://vnc:8080
-- Access port-based routing to any service inside the container by http://port-<port_no>:8080
+- Access web terminal at http://terminal.local:8080
+- Access code editor at http://editor.local:8080
+- Access VNC at http://vnc.local:8080
+- Access port-based routing to any service inside the container by http://port-<port_no>.local:8080
 
 > In the above examples, terminal, editor, vnc and port-<port_no> - all the dummy domains are pointed to 127.0.0.1.
-
-If you want to use any proxy in front of the container, you should set the `Host` header correctly. It should be out of these specific formats:
-- terminal
-- editor
-- vnc
-- port-<port_no>
-- terminal:any_port_or_string
-- editor:any_port_or_string
-- vnc:any_port_or_string
-- port-<port_no>:any_port_or_string
 
 ### Configuration via environment variables
 | Environment variable | Default value | Description          |

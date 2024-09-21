@@ -10,11 +10,26 @@ So, I decided to build this lightweight tool to manage it.
 
 The name `LabCaptain` is due to the fact that it takes the responsibility of lab environment management. You will just say it you need to deploy a lab environment for certain period of time and it will do the task.
 
+Now, the most interesing part is -
+1. Labcaptain providing docker base image, so that you can build your own lab environment easily.
+```
+registry.hub.docker.com/tanmoysrt/labcaptain_base
+```
+2. Labcaptain providing API to manage lab environment.
+3. Web terminal, code server, VNC, port forwarding out of the box.
+- https://terminal.{lab_id}.example.com : Web terminal
+- https://editor.{lab_id}.example.com : Code server (VSCode like)
+- https://vnc.{lab_id}.example.com : VNC
+- https://port-{port_no}.{lab_id}.example.com : Port forwarding out of the box. You can run your own tool inside the container and access it via the url format. Just small restrictions - you cant use 8000, 8001, 8002, 8003, 8004 ports.
+
+To know more, how can you disable specific feature like VNC, check the image documentation.
+https://hub.docker.com/r/tanmoysrt/labcaptain_base
+
 ### Tech Stack
 - Golang
 - SQLite3 (for database)
 - Podman
-- Prometheus
+- Prometheus (for monitoring)
 - HAProxy
 - NoVNC + noVNC proxy
 - ttyd
@@ -67,6 +82,50 @@ WantedBy=multi-user.target
   ssh-add /root/.ssh/id_rsa
   ```
   and make that file executable with `chmod +x /etc/rc.local` and reboot the server.
+
+### API Documentation
+1. Deploy a lab
+  - Method: POST
+  - URL: http://localhost:8888/start
+  - Body:
+    ```json
+    {
+      "image": "registry.hub.docker.com/tanmoysrt/labcaptain_base:1",
+      "expiry_time": "2024-09-21T13:04:05Z",
+      "web_terminal_enabled": true,
+      "code_server_enabled": true,
+      "vnc_enabled": true,
+      "port_proxy_enabled": true,
+      "environment_variables": ""
+    }
+    ```
+  - Response:
+    ```json
+    {
+      "id": "tqtw1fl7ku2imcp",
+      "status": "requested",
+      "expiry_time": "2024-01-01T00:00:00Z"
+    }
+    ```
+2. Get lab status
+  - Method: GET
+  - URL: http://localhost:8888/status/:lab_id
+  - Response:
+    ```json
+    {
+      "id": "tqtw1fl7ku2imcp",
+      "status": "provisioned",
+      "expiry_time": "2024-01-01T00:00:00Z"
+    }
+    ```
+3. Stop a lab
+  - Method: POST
+  - URL: http://localhost:8888/stop/:lab_id
+  - Response:
+    ```text
+    Lab destroyed successfully
+    ```
+    If you got 200 OK, it means the lab is destroyed successfully.
 
 ### Future Work
 -[] Implement SSH connection pool for faster communication
