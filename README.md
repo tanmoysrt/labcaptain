@@ -144,10 +144,10 @@ WantedBy=multi-user.target
     If you got 200 OK, it means the lab is destroyed successfully.
 
 ### Future Work
--[] Implement SSH connection pool for faster communication
--[] Implement support for resource limits
--[] Configurable option for lab proxy at port 443 ssl (P.S : currently it's also possible by editing `labcaptain/nginx.conf.template`)
--[] Remote storage mount support
+- [ ] Implement SSH connection pool for faster communication
+- [ ] Implement support for resource limits
+- [ ] Configurable option for lab proxy at port 443 ssl (P.S : currently it's also possible by editing `labcaptain/nginx.conf.template`)
+- [ ] Remote storage mount support
 
 ### License
 MIT License
