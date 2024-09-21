@@ -1,3 +1,2 @@
 - free_port detection should consider unit files inside quadlet
 - bulk lab destroy
-- in deployment consider server usage (prometheus metrics)

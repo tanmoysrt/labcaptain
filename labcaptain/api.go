@@ -1,10 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 type LabCreateRequest struct {
@@ -25,6 +29,15 @@ type LabInfo struct {
 
 func startAPIServer() {
 	e := echo.New()
+	authtoken := os.Getenv("LABCAPTAIN_API_TOKEN")
+	if strings.Compare(authtoken, "") == 0 {
+		fmt.Println("No API token provided. API access will be open to all. Pass LABCAPTAIN_API_TOKEN environment variable to enable authentication.")
+	} else {
+		fmt.Println("API token provided. API access will be restricted to authorized users")
+		e.Use(middleware.KeyAuth(func(key string, c echo.Context) (bool, error) {
+			return strings.Compare(key, authtoken) == 0, nil
+		}))
+	}
 	e.HideBanner = true
 	e.GET("/status/:lab_id", func(c echo.Context) error {
 		lab_id := c.Param("lab_id")
