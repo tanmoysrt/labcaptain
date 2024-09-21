@@ -12,8 +12,10 @@ The name `LabCaptain` is due to the fact that it takes the responsibility of lab
 
 Now, the most interesing part is -
 1. Labcaptain providing docker base image, so that you can build your own lab environment easily.
-   ```
-   registry.hub.docker.com/tanmoysrt/labcaptain_base
+   ```dockerfile
+   FROM registry.hub.docker.com/tanmoysrt/labcaptain_base
+
+   # Write your own configuration
    ```
 2. Labcaptain providing API to manage lab environment.
 3. Web terminal, code server, VNC, port forwarding out of the box.
