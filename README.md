@@ -40,6 +40,14 @@ https://hub.docker.com/r/tanmoysrt/labcaptain_base
 ### Lab Architecture (Labcaptain Docker Image)
 ![Lab Architecture](./assets/lab_architecture.png)
 
+
+> [!CAUTION]
+> Before we procced, remember this points.
+> - Your lab deployment lab server doesn't receive incoming traffice directly from internet, Only your `LabCaptain` server or management server receives the traffic.
+> - So, you must use firewall to block incoming traffic from internet to your lab server except the traffic which is coming from your `LabCaptain` server or management server.
+> - If you are hosting all the servers in same cloud provider, consider to create a private network and assign public IP to your `LabCaptain` server. It can communicate with your lab server via private IPs.
+
+
 ### Installation guide (Ubuntu 22.04)
 1. Install golang (https://go.dev/doc/install)
 2. Clone the repo
