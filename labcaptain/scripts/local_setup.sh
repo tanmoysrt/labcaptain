@@ -53,6 +53,11 @@ if [ ! -d "$PROMETHEUS_DIR" ]; then
     ln -sf ${PROMETHEUS_DIR}/prometheus /usr/local/bin/prometheus
     ln -sf ${PROMETHEUS_DIR}/promtool /usr/local/bin/promtool
 
+    # create /etc/prometheus directory if it doesn't exist
+    if [ ! -d "/etc/prometheus" ]; then
+        mkdir -p /etc/prometheus
+    fi
+
     # Add dummy prometheus config if it doesn't exist
     if [ ! -f "/etc/prometheus/prometheus.yml" ]; then
         tee /etc/prometheus/prometheus.yml > /dev/null <<EOF
