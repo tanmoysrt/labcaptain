@@ -11,14 +11,14 @@ So, I decided to build this lightweight tool to manage it.
 The name `LabCaptain` is due to the fact that it takes the responsibility of lab environment management. You will just say it you need to deploy a lab environment for certain period of time and it will do the task.
 
 Now, the most interesing part is -
-1. Labcaptain providing docker base image, so that you can build your own lab environment easily.
+1. Labcaptain project is providing a docker base image, so that you can build your own lab environment easily.
    ```dockerfile
    FROM registry.hub.docker.com/tanmoysrt/labcaptain_base
 
    # Write your own configuration
    ```
-2. Labcaptain providing API to manage lab environment.
-3. Web terminal, code server, VNC, port forwarding out of the box.
+2. Simple API to manage lab environment.
+3. Web terminal, code server, VNC, port forwarding is pre-configured out of the box.
    - https://terminal.{lab_id}.example.com : Web terminal
    - https://editor.{lab_id}.example.com : Code server (VSCode like)
    - https://vnc.{lab_id}.example.com : VNC
@@ -43,14 +43,14 @@ https://hub.docker.com/r/tanmoysrt/labcaptain_base
 ![Lab Architecture](./assets/lab_architecture.png)
 
 
+### Installation guide (Ubuntu 22.04)
 > [!CAUTION]
-> Before we procced, remember this points.
+> Before we procced, remember these points.
 > - Your lab deployment lab server doesn't receive incoming traffice directly from internet, Only your `LabCaptain` server or management server receives the traffic.
 > - So, you must use firewall to block incoming traffic from internet to your lab server except the traffic which is coming from your `LabCaptain` server or management server.
 > - If you are hosting all the servers in same cloud provider, consider to create a private network and assign public IP to your `LabCaptain` server. It can communicate with your lab server via private IPs.
 
 
-### Installation guide (Ubuntu 22.04)
 1. Install golang (https://go.dev/doc/install)
 2. Clone the repo
 3. Go inside `labcaptain` folder
