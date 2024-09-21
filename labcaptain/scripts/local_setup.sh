@@ -70,12 +70,9 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-User=nobody
+User=root
 ExecStart=/usr/local/bin/prometheus \
-  --config.file=/usr/local/bin/prometheus-${PROMETHEUS_VERSION}/prometheus.yml \
-  --storage.tsdb.path=/var/lib/prometheus/ \
-  --web.console.templates=/usr/local/bin/prometheus-${PROMETHEUS_VERSION}/consoles \
-  --web.console.libraries=/usr/local/bin/prometheus-${PROMETHEUS_VERSION}/console_libraries
+  --config.file=/etc/prometheus/prometheus.yml
 
 [Install]
 WantedBy=multi-user.target
