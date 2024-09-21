@@ -54,3 +54,12 @@ WantedBy=multi-user.target
 -[] Implement SSH connection pool for faster communication
 -[] Implement support for resource limits
 -[] Configurable option for lab proxy at port 443 ssl (P.S : currently it's also possible by editing `labcaptain/nginx.conf.template`)
+
+### License
+MIT License
+
+### Credits
+Special thanks to these projects
+- https://github.com/ConSol/docker-headless-vnc-container (Apache License 2.0). It made it possible to have proper configuration for Xfce4 + noVNC setup for headsup.
+- https://github.com/tsl0922/ttyd (MIT License). It made it possible to have a web terminal.
+- https://github.com/coder/code-server (MIT License). It made it possible to have a code server.

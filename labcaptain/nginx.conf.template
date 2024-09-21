@@ -18,8 +18,30 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
 
+        # Set headers for CORS
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header 'Access-Control-Allow-Methods' '*';  # Allow all methods
+        add_header 'Access-Control-Allow-Headers' '*';  # Allow all headers
+        add_header 'Access-Control-Allow-Credentials' 'true';
+
+        # Allow iframe embedding with CSP
+        add_header Content-Security-Policy "frame-ancestors *;";
+
         # Increase timeout for WebSocket connections
         proxy_read_timeout 86400s;
         proxy_send_timeout 86400s;
+
+        # Handle preflight requests
+        if ($request_method = OPTIONS) {
+            # Set headers for CORS
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Methods' '*';
+            add_header 'Access-Control-Allow-Headers' '*';
+            add_header 'Access-Control-Allow-Credentials' 'true';
+
+            # Allow iframe embedding with CSP
+            add_header Content-Security-Policy "frame-ancestors *;";
+            return 204;  # No Content
+        }
    }
 }
