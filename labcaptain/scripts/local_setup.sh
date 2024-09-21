@@ -95,7 +95,8 @@ After=network-online.target
 [Service]
 User=root
 ExecStart=/usr/local/bin/prometheus \
-  --config.file=/etc/prometheus/prometheus.yml
+  --config.file=/etc/prometheus/prometheus.yml \
+  --web.enable-lifecycle
 
 [Install]
 WantedBy=multi-user.target

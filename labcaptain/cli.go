@@ -130,7 +130,7 @@ var serverSetupPodmanCmd = &cobra.Command{
 		}
 		err := SetupPodman(args[0] + ":22")
 		if err != nil {
-			fmt.Println("Failed to setup podman on server with IP " + cmd.Flag("ip").Value.String())
+			fmt.Println("Failed to setup podman on server with IP " + args[0])
 			fmt.Println(err.Error())
 			return
 		} else {
