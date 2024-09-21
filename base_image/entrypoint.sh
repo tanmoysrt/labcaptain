@@ -1,8 +1,10 @@
 #!/bin/bash
 
 set -e
+# add alias python=python3 in .bashrc
+echo "alias python=python3" >> "$HOME/.bashrc"
+
 source "$HOME/.bashrc"
-alias python=python3
 
 # Set password for labuser
 echo "labuser:$USER_PASSWORD" | sudo chpasswd
@@ -61,6 +63,11 @@ fi
 
 # Start HAProxy as ingress
 start_service haproxy -f /etc/haproxy/haproxy.cfg
+
+# If `/autostart.sh` exists and is executable, run it
+if [ -x /autostart.sh ]; then
+    /autostart.sh &
+fi
 
 # Wait for all processes to finish
 echo "Waiting for processes to finish..."

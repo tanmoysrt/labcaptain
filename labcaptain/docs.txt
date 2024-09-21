@@ -1,2 +1,0 @@
-- free_port detection should consider unit files inside quadlet
-- bulk lab destroy
