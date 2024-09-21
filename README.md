@@ -19,9 +19,9 @@ Now, the most interesing part is -
    ```
 2. Simple API to manage lab environment.
 3. Web terminal, code server, VNC, port forwarding is pre-configured out of the box.
-   - https://terminal.{lab_id}.example.com : Web terminal
-   - https://editor.{lab_id}.example.com : Code server (VSCode like)
-   - https://vnc.{lab_id}.example.com : VNC
+   - https://terminal-{lab_id}.example.com : Web terminal
+   - https://editor-{lab_id}.example.com : Code server (VSCode like)
+   - https://vnc-{lab_id}.example.com : VNC
    - https://port-{port_no}.{lab_id}.example.com : Port forwarding out of the box. You can run your own tool inside the container and access it via the url format. Just small restrictions - you cant use 8000, 8001, 8002, 8003, 8004 ports.
 
 To know more, how can you disable specific feature like VNC, check the image documentation.

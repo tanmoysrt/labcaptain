@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	hostPattern      = regexp.MustCompile(`^port-(\d+).\S+$`)
+	hostPattern      = regexp.MustCompile(`^port-(\d+)-\S+$`)
 	blacklistedPorts = map[string]bool{
 		"80": true, "8001": true, "8002": true, "8003": true, "8004": true,
 	}
