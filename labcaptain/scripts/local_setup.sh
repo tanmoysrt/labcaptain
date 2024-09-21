@@ -53,6 +53,24 @@ if [ ! -d "$PROMETHEUS_DIR" ]; then
     ln -sf ${PROMETHEUS_DIR}/prometheus /usr/local/bin/prometheus
     ln -sf ${PROMETHEUS_DIR}/promtool /usr/local/bin/promtool
 
+    # Add dummy prometheus config if it doesn't exist
+    if [ ! -f "/etc/prometheus/prometheus.yml" ]; then
+        tee /etc/prometheus/prometheus.yml > /dev/null <<EOF
+global:
+  scrape_interval: 10s
+scrape_configs:
+- job_name: prometheus
+  static_configs:
+  - targets:
+    - localhost:9090
+- job_name: node
+  static_configs:
+  - targets:
+#start_targets_list
+#end_targets_list
+EOF
+    fi
+
     # Clean up
     rm /tmp/prometheus.tar.gz
 
