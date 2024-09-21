@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/tanmoysrt/labcaptain/main/assets/logo.png" width="200">
+<img src="./assets/logo.png" width="200">
 
 ### What is LabCaptain ?
 LabCaptain is a tiny daemon + CLI tool that helps to deploy lab environment in cluster.
