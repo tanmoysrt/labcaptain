@@ -22,9 +22,10 @@ type LabCreateRequest struct {
 }
 
 type LabInfo struct {
-	ID         string    `json:"id"`
-	Status     LabStatus `json:"status"`
-	ExpiryTime time.Time `json:"expiry_time"`
+	ID           string    `json:"id"`
+	Status       LabStatus `json:"status"`
+	BaseEndpoint string    `json:"base_endpoint"`
+	ExpiryTime   time.Time `json:"expiry_time"`
 }
 
 func startAPIServer() {
@@ -44,15 +45,17 @@ func startAPIServer() {
 		lab, err := GetLabByID(lab_id)
 		if err != nil {
 			return c.JSON(200, LabInfo{
-				ID:         lab_id,
-				Status:     LabExpiredStatus,
-				ExpiryTime: time.Now(),
+				ID:           lab_id,
+				Status:       LabExpiredStatus,
+				ExpiryTime:   time.Now(),
+				BaseEndpoint: "",
 			})
 		}
 		return c.JSON(200, LabInfo{
-			ID:         lab.ID,
-			Status:     lab.Status,
-			ExpiryTime: lab.ExpiryTime,
+			ID:           lab.ID,
+			Status:       lab.Status,
+			ExpiryTime:   lab.ExpiryTime,
+			BaseEndpoint: lab.BaseEndpoint,
 		})
 	})
 	e.POST("/start", func(c echo.Context) error {
@@ -78,9 +81,10 @@ func startAPIServer() {
 			return c.String(http.StatusInternalServerError, "Failed to create lab")
 		}
 		return c.JSON(200, LabInfo{
-			ID:         lab.ID,
-			Status:     lab.Status,
-			ExpiryTime: lab.ExpiryTime,
+			ID:           lab.ID,
+			Status:       lab.Status,
+			ExpiryTime:   lab.ExpiryTime,
+			BaseEndpoint: lab.BaseEndpoint,
 		})
 	})
 	e.POST("/stop/:lab_id", func(c echo.Context) error {

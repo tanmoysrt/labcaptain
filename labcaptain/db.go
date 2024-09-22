@@ -69,6 +69,7 @@ type Lab struct {
 	ID                   string `gorm:"primaryKey"`
 	Image                string
 	Status               LabStatus `gorm:"default:requested"`
+	BaseEndpoint         string
 	ExpiryTime           time.Time
 	ServerIP             string
 	ContainerPort        int

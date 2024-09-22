@@ -16,9 +16,9 @@ var nginxConfigTemplate string
 var successLogger = log.New(os.Stdout, "[SUCCESS] [NGINX] : ", log.LstdFlags)
 var errorLogger = log.New(os.Stderr, "[ERROR] [NGINX] : ", log.LstdFlags)
 
-func generateNginxConfig(labID string, serverIP string, containerPort int) {
+func generateNginxConfig(labID string, serverIP string, containerPort int) string {
 	nginxCnfig := string(nginxConfigTemplate)
-	nginxCnfig = strings.ReplaceAll(nginxCnfig, "{{base_domain}}", os.ExpandEnv("$LAB_CAPTAIN_BASE_DOMAIN"))
+	nginxCnfig = strings.ReplaceAll(nginxCnfig, "{{base_domain}}", os.Getenv("LAB_CAPTAIN_BASE_DOMAIN"))
 	nginxCnfig = strings.ReplaceAll(nginxCnfig, "{{lab_id}}", labID)
 	nginxCnfig = strings.ReplaceAll(nginxCnfig, "{{server_ip}}", serverIP)
 	nginxCnfig = strings.ReplaceAll(nginxCnfig, "{{container_port}}", strconv.Itoa(containerPort))
@@ -28,6 +28,7 @@ func generateNginxConfig(labID string, serverIP string, containerPort int) {
 	} else {
 		successLogger.Println(fmt.Sprintf("%s > Nginx config generated successfully", labID))
 	}
+	return fmt.Sprintf("%s.%s", labID, os.Getenv("LAB_CAPTAIN_BASE_DOMAIN"))
 }
 
 func removeNginxConfig(labID string) {

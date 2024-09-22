@@ -111,13 +111,13 @@ func DeployLab(labID string) error {
 	}
 	lab.ServerIP = server
 	lab.ContainerPort = port
-	// run the deploy script
 	lab.Status = LabProvisionedStatus
+	base_endpoint := generateNginxConfig(lab.ID, server, port)
+	lab.BaseEndpoint = base_endpoint
 	err = db.Save(&lab).Error
 	if err != nil {
 		return err
 	}
-	generateNginxConfig(lab.ID, server, port)
 	return nil
 }
 
