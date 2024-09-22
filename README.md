@@ -50,6 +50,22 @@ https://hub.docker.com/r/tanmoysrt/labcaptain_base
 > - So, you must use firewall to block incoming traffic from internet to your lab server except the traffic which is coming from your `LabCaptain` server or management server.
 > - If you are hosting all the servers in same cloud provider, consider to create a private network and assign public IP to your `LabCaptain` server. It can communicate with your lab server via private IPs.
 
+**Configure SSH Agent**
+- Generate a ssh private key for all of your other servers (if you haven't already)
+  ```bash
+  ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+  ```
+  Put the private key in `/root/.ssh/id_rsa` and the public key in `/root/.ssh/id_rsa.pub`
+- Create/edit `/etc/rc.local` file and add the following line
+  ```bash
+  #!/bin/sh -e
+
+  eval $(ssh-agent)
+  ssh-add /root/.ssh/id_rsa
+  exit 0
+  ```
+  and make that file executable with `chmod +x /etc/rc.local` and reboot the server.
+- That's it.
 
 1. Install golang (https://go.dev/doc/install)
 2. Clone the repo
@@ -62,18 +78,20 @@ https://hub.docker.com/r/tanmoysrt/labcaptain_base
 9. Run `labcaptain server setup-podman <ip>` to setup podman on the server
 10. Run `labcaptain server setup-prometheus <ip>` to setup prometheus exporter on the server
 11. Run `labcaptain server enable <ip>` to enable a server
-12. Create a systemd service file `/etc/systemd/system/labcaptain.service`
+12. Create a systemd service file `/etc/systemd/system/labcaptain.service` like this
 ```bash
 [Unit]
 Description=LabCaptain
 After=network.target
 
 [Service]
+WorkingDirectory="<provide_a_path_here_to_store_labcaptain_data>"
 User=root
 Type=simple
 Environment="LAB_CAPTAIN_BASE_DOMAIN=example.com"
 Environment="LABCAPTAIN_API_TOKEN=random_secret"
-ExecStart=/usr/local/bin/labcaptain
+ExecStartPre=/bin/bash -c 'ssh-agent -s | grep -E "SSH_AUTH_SOCK|SSH_AGENT_PID" > /tmp/ssh-agent.env && source /tmp/ssh-agent.env && ssh-add /root/.ssh/id_rsa'
+ExecStart=/bin/bash -c 'source /tmp/ssh-agent.env && /usr/local/bin/labcaptain start'
 Restart=always
 RestartSec=10
 
@@ -83,21 +101,6 @@ WantedBy=multi-user.target
 13. Run `systemctl daemon-reload` and `systemctl enable labcaptain`
 14. Run `systemctl start labcaptain` to start labcaptain
 
-**Note:** Your server may have not ssh-agent installed. Run `echo $SSH_AUTH_SOCK` to check if it's installed.
-
-- Generate a ssh private key for all of your other servers (if you haven't already)
-  ```bash
-  ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-  ```
-  Put the private key in `/root/.ssh/id_rsa` and the public key in `/root/.ssh/id_rsa.pub`
-
-- Add the public key to all of your other servers
-- Create/edit `/etc/rc.local` file and add the following line
-  ```bash
-  eval $(ssh-agent -s)
-  ssh-add /root/.ssh/id_rsa
-  ```
-  and make that file executable with `chmod +x /etc/rc.local` and reboot the server.
 
 ### API Documentation
 1. Deploy a lab
