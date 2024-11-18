@@ -3,11 +3,13 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"net"
 	"os"
+	"sync"
+)
 
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/agent"
+var (
+	sshMapMutex    *sync.Mutex      = &sync.Mutex{}
+	sshHostPoolMap map[string]*Pool = make(map[string]*Pool)
 )
 
 // Function to run a remote command via SSH using the system's SSH agent
@@ -15,32 +17,30 @@ func runCommandOnServer(host, command string) error {
 	return runCommandOnServerWithBuffer(host, command, nil, nil)
 }
 func runCommandOnServerWithBuffer(host, command string, stdoutBuffer, stderrBuffer *bytes.Buffer) error {
-	// Connect to the local SSH agent
-	sshAgent, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK"))
+	var p *Pool
+
+	sshMapMutex.Lock()
+	p = sshHostPoolMap[host]
+	if p == nil {
+		p, err := NewPool(host)
+		if err != nil {
+			return err
+		}
+		sshHostPoolMap[host] = p
+	}
+	sshMapMutex.Unlock()
+	c, err := p.borrowClient()
 	if err != nil {
-		return fmt.Errorf("could not connect to SSH agent: %v", err)
+		return err
 	}
-	defer sshAgent.Close()
+	defer p.returnClient(c)
 
-	// Create an SSH client configuration using the agent
-	agentClient := agent.NewClient(sshAgent)
-	config := &ssh.ClientConfig{
-		User: "root",
-		Auth: []ssh.AuthMethod{
-			ssh.PublicKeysCallback(agentClient.Signers),
-		},
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(), // Ignore host key verification for simplicity
-	}
+	return runCommand(c, command, stdoutBuffer, stderrBuffer)
+}
 
-	// Connect to the SSH server
-	client, err := ssh.Dial("tcp", host, config)
-	if err != nil {
-		return fmt.Errorf("failed to dial: %v", err)
-	}
-	defer client.Close()
-
+func runCommand(sc *sshClient, command string, stdoutBuffer, stderrBuffer *bytes.Buffer) error {
 	// Create a session
-	session, err := client.NewSession()
+	session, err := sc.client.NewSession()
 	if err != nil {
 		return fmt.Errorf("failed to create session: %v", err)
 	}
